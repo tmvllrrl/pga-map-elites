@@ -29,6 +29,7 @@ def launch_plots(
     save_videos=False,
     p_values=False,
     verbose=False,
+    ryan=False,
 ):
     """
     Launch all map and progress plots analysis in exp_path for algo_path.
@@ -52,6 +53,8 @@ def launch_plots(
         - verbose {bool}
     """
 
+    # find_new_archives()
+
     if save_path == "":
         save_path = exp_path
     elif not os.path.exists(f"{save_path}"):
@@ -74,6 +77,7 @@ def launch_plots(
             min_fit,
             max_fit,
             verbose=verbose,
+            ryan=ryan
         )
         print("\nPlotted all archives.\n")
 

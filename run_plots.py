@@ -40,6 +40,8 @@ def read_input():
 
     parser.add_argument("--p_values", action="store_true", help="Compute p-values")
 
+    parser.add_argument("--ryan", action="store_true", help="Plot archives based on Ryan's results")
+
     args = parser.parse_args()
     args.neurons_list = [int(x) for x in args.neurons_list.split()]
 
@@ -74,6 +76,8 @@ if __name__ == "__main__":
             args.neurons_list,
         )
         env.close()
+    
+    print(args.save_videos)
 
     # Start plots
     launch_plots(
@@ -88,10 +92,11 @@ if __name__ == "__main__":
         min_fit=None if args.min_fitness == "" else float(args.min_fitness),
         max_fit=None if args.max_fitness == "" else float(args.max_fitness),
         archive=not(args.visualisation),
-        progress=not(args.visualisation),
-        variation=not(args.visualisation),
+        progress=args.visualisation, # Changed from not()
+        variation=args.visualisation, # Changed from not()
         visualisation=args.visualisation,
         save_videos=args.save_videos,
         p_values=args.p_values,
         verbose=args.verbose,
+        ryan=args.ryan,
     )

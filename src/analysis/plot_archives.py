@@ -11,6 +11,7 @@ from src.analysis.utils import (
     get_variant,
 )
 
+
 #######################################
 # Global variable for archive plotting
 
@@ -47,6 +48,7 @@ def plot_archive(
     min_fit=False,
     max_fit=False,
     verbose=False,
+    ryan=False,
 ):
     """
     Find all archives files and plot them.
@@ -64,15 +66,21 @@ def plot_archive(
         "\nReading and printing {} archive data files:".format(len(archive_data_files))
     )
     print(archive_data_files)
+    print("\n\n", archive_data_types)
+
+    print("\n\n", archive_data_additional_files)
+
+    print("\n\n", archive_bd_axis)
+
+    if ryan:
+        pass
 
     # Plot all archives
     for idx, archive_file in enumerate(archive_data_files):
-        archive_plot_filename = archive_file[archive_file.rfind("/") + 1 :].replace(
-            ".dat", ""
-        )
-        archive_plot_filename = archive_plot_filename.replace(
-            "BulletEnv-v0", ""
-        ).replace("2D", "")
+
+        archive_plot_filename = archive_file[archive_file.rfind("/") + 1 :].replace(".dat", "")
+        archive_plot_filename = archive_plot_filename.replace("BulletEnv-v0", "" ).replace("2D", "")
+
         if archive_data_types[idx]:
             if os.path.isfile(archive_data_additional_files[idx][0]) and os.path.isfile(
                 archive_data_additional_files[idx][1]
@@ -110,6 +118,7 @@ def plot_archive(
                     verbose=verbose,
                     colormap=mpl.cm.viridis,
                     bd_axis=archive_bd_axis[idx],
+                    ryan=ryan
                 )
             else:
                 plotable = True
@@ -199,3 +208,5 @@ def find_archives(prefixe, exp_path, save_path, env_names, algo_names, max_evals
         archive_data_additional_files,
         archive_bd_axis,
     )
+
+
