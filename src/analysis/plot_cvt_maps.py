@@ -3,6 +3,7 @@ import traceback
 import matplotlib as mpl
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.lines import Line2D
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.spatial import Voronoi
 from sklearn.neighbors import KDTree
@@ -49,6 +50,9 @@ def plot_cvt_map(
     
     if ryan:
         fit, beh = load_ryan_data(archive_file, plot_species) # fit = fit if plot_species False, species if True
+        if plot_species:
+            # colormap = mpl.colors.ListedColormap(["red", "green", "orange", "yellow", "violet", "deeppink", "sienna", "black"])
+            colormap = mpl.cm.Pastel1
     else:
         fit, beh, _ = load_data(archive_file, centroids.shape[1], verbose=verbose)
 
@@ -93,6 +97,7 @@ def plot_cvt_map(
         "ytick.labelsize": 18,
         "text.usetex": False,
         "figure.figsize": [6, 6],
+        'legend.title_fontsize': 18
     }
     mpl.rcParams.update(params)
 
@@ -114,11 +119,26 @@ def plot_cvt_map(
     ax.set_yticks([])
     ax.set_xlabel(bd_axis[0])
     ax.set_ylabel(bd_axis[1])
-    divider = make_axes_locatable(ax)
-    cax = divider.append_axes("right", size="5%", pad=0.05)
-    cbar = plt.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=colormap), cax=cax)
-    cbar.set_label("Fitness", size=24, labelpad=5)
-    cbar.ax.tick_params(labelsize=18)
+    
+
+    if not plot_species:
+        divider = make_axes_locatable(ax)
+        cax = divider.append_axes("right", size="5%", pad=0.05)
+
+        cbar = plt.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=colormap), cax=cax)
+        cbar.set_label("Fitness", size=24, labelpad=5)
+        cbar.ax.tick_params(labelsize=18)
+    else:
+        custom_lines = []
+        for i in range(max_fit[0]+1):
+            custom_lines.append(Line2D([0], [0], color='w', marker='s', markersize=15, markerfacecolor=colormap(norm(i/1.))))
+
+        labels = []
+        for i in range(max_fit[0]+1):
+            species_id = i + 1
+            labels.append(f"$z_{species_id}$")
+        
+        ax.legend(custom_lines, labels, title="Species", loc="center left", bbox_to_anchor=(1, 0.5))
 
     # Save figure
     fig.savefig(f"{save_path}/{case_name}.png", bbox_inches="tight")
