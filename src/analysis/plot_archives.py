@@ -40,8 +40,8 @@ BD_AXIS = [
 
 def plot_archive(
     prefixe,
-    exp_path,
-    save_path,
+    exp_path, # Results path
+    save_path, # Plots path
     env_names,
     algo_names,
     max_evals,
@@ -65,72 +65,105 @@ def plot_archive(
     print(
         "\nReading and printing {} archive data files:".format(len(archive_data_files))
     )
-    print(archive_data_files)
-    print("\n\n", archive_data_types)
-
-    print("\n\n", archive_data_additional_files)
-
-    print("\n\n", archive_bd_axis)
+    # print(archive_data_files) # The archive files
+    # print("\n\n", archive_data_types) # Usually all false
+    # print("\n\nARCHIVE DATA ADDITIONAL", archive_data_additional_files) # Centroid file
+    # print("\n\n", archive_bd_axis) # Just leg 1 and leg 2 axis labels
 
     if ryan:
-        pass
+        archive_data_files = os.listdir(exp_path)
+        env_name = "QDWalker2DBulletEnv-v0"
+        
+        for idx, archive_file in enumerate(archive_data_files):
+            print(f"IDX: {idx}\t ARCHIVE FILE: {archive_file}")
+            archive_plot_filename = f"archive_ryan_{env_name}_beh_{idx}"
 
-    # Plot all archives
-    for idx, archive_file in enumerate(archive_data_files):
-
-        archive_plot_filename = archive_file[archive_file.rfind("/") + 1 :].replace(".dat", "")
-        archive_plot_filename = archive_plot_filename.replace("BulletEnv-v0", "" ).replace("2D", "")
-
-        if archive_data_types[idx]:
-            if os.path.isfile(archive_data_additional_files[idx][0]) and os.path.isfile(
-                archive_data_additional_files[idx][1]
-            ):
-                plotable = plot_cartesian_map(
+            plotable = plot_cvt_map(
                     archive_file,
-                    archive_data_additional_files[idx][0],
-                    archive_data_additional_files[idx][1],
+                    './CVT/centroids_1024_2.dat', # Point to centroid file used
                     save_path,
                     archive_plot_filename,
                     min_fit=min_fit,
                     max_fit=max_fit,
                     verbose=verbose,
                     colormap=mpl.cm.viridis,
-                    bd_axis=archive_bd_axis[idx],
-                )
-            else:
-                plotable = True
-                print(
-                    "Cells files",
-                    archive_data_additional_files[idx][0],
-                    "or",
-                    archive_data_additional_files[idx][1],
-                    "does not exist.",
-                )
-        else:
-            if os.path.isfile(archive_data_additional_files[idx]):
-                plotable = plot_cvt_map(
-                    archive_file,
-                    archive_data_additional_files[idx],
-                    save_path,
-                    archive_plot_filename,
-                    min_fit=min_fit,
-                    max_fit=max_fit,
-                    verbose=verbose,
-                    colormap=mpl.cm.viridis,
-                    bd_axis=archive_bd_axis[idx],
+                    # bd_axis=archive_bd_axis,
                     ryan=ryan
-                )
+            )
+
+            archive_plot_filename = f"archive_ryan_{env_name}_species_{idx}"
+
+            plotable = plot_cvt_map(
+                    archive_file,
+                    './CVT/centroids_1024_2.dat', # Point to centroid file used
+                    save_path,
+                    archive_plot_filename,
+                    min_fit=min_fit,
+                    max_fit=max_fit,
+                    verbose=verbose,
+                    colormap=mpl.cm.viridis,
+                    # bd_axis=archive_bd_axis,
+                    ryan=ryan,
+                    plot_species=True
+            )
+
+    else: # PGA-Map-Elites original method for plotting information     
+        # Plot all archives
+        for idx, archive_file in enumerate(archive_data_files):
+
+            archive_plot_filename = archive_file[archive_file.rfind("/") + 1 :].replace(".dat", "")
+            archive_plot_filename = archive_plot_filename.replace("BulletEnv-v0", "" ).replace("2D", "")
+
+            if archive_data_types[idx]:
+                if os.path.isfile(archive_data_additional_files[idx][0]) and os.path.isfile(
+                    archive_data_additional_files[idx][1]
+                ):
+                    plotable = plot_cartesian_map(
+                        archive_file,
+                        archive_data_additional_files[idx][0],
+                        archive_data_additional_files[idx][1],
+                        save_path,
+                        archive_plot_filename,
+                        min_fit=min_fit,
+                        max_fit=max_fit,
+                        verbose=verbose,
+                        colormap=mpl.cm.viridis,
+                        bd_axis=archive_bd_axis[idx],
+                    )
+                else:
+                    plotable = True
+                    print(
+                        "Cells files",
+                        archive_data_additional_files[idx][0],
+                        "or",
+                        archive_data_additional_files[idx][1],
+                        "does not exist.",
+                    )
             else:
-                plotable = True
-                print(
-                    "Centroid file",
-                    archive_data_additional_files[idx],
-                    "does not exist.",
-                )
-        if not plotable:
-            archive_plotable = False
-            break
-    return archive_plotable
+                if os.path.isfile(archive_data_additional_files[idx]):
+                    plotable = plot_cvt_map(
+                        archive_file,
+                        archive_data_additional_files[idx],
+                        save_path,
+                        archive_plot_filename,
+                        min_fit=min_fit,
+                        max_fit=max_fit,
+                        verbose=verbose,
+                        colormap=mpl.cm.viridis,
+                        bd_axis=archive_bd_axis[idx],
+                        ryan=ryan
+                    )
+                else:
+                    plotable = True
+                    print(
+                        "Centroid file",
+                        archive_data_additional_files[idx],
+                        "does not exist.",
+                    )
+            if not plotable:
+                archive_plotable = False
+                break
+        return archive_plotable
 
 
 #############################

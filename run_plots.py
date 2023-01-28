@@ -77,8 +77,6 @@ if __name__ == "__main__":
         )
         env.close()
     
-    print(args.save_videos)
-
     # Start plots
     launch_plots(
         args.save_path,

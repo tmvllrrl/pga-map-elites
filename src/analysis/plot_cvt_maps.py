@@ -25,7 +25,8 @@ def plot_cvt_map(
     verbose=False,
     colormap=mpl.cm.viridis,
     bd_axis=["Leg 1 proportion of contact-time", "Leg 2 proportion of contact-time"],
-    ryan=False
+    ryan=False,
+    plot_species=False
 ):
     """
     Plot a cvt archive.
@@ -47,7 +48,7 @@ def plot_cvt_map(
     verbose and print("\nArchive filename : ", archive_file)
     
     if ryan:
-        fit, beh = load_ryan_data()
+        fit, beh = load_ryan_data(archive_file, plot_species) # fit = fit if plot_species False, species if True
     else:
         fit, beh, _ = load_data(archive_file, centroids.shape[1], verbose=verbose)
 
@@ -274,18 +275,26 @@ def load_data(filename, dim, verbose=False):
 
 import json 
 
-def load_ryan_data():
+def load_ryan_data(archive_file, plot_species=False):
     archive = {}
-    save_file = './results_Ryan/archive.json'
+    results_file = f'./results_Ryan/{archive_file}'
 
-    with open(save_file) as f:
+    with open(results_file) as f:
         archive_dict = json.load(f)
 
-    for item in archive_dict["items"]:
-        archive[tuple(item[0])] = item[1]
+    if not plot_species:
+        for item in archive_dict["items"]:
+            archive[tuple(item[0])] = item[1]
 
-    beh_new = np.asarray(list(archive.keys())) 
-    fit_new = np.asarray(list(archive.values())) 
-    fit_new = np.expand_dims(fit_new, axis=1)
+        beh = np.asarray(list(archive.keys())) 
+        fit = np.asarray(list(archive.values()))
+        fit = np.expand_dims(fit, axis=1)
+    else:
+        for item in archive_dict["species_ids"]:
+            archive[tuple(item[0])] = item[1]
+        
+        beh = np.asarray(list(archive.keys())) 
+        fit = np.asarray(list(archive.values()))
+        fit = np.expand_dims(fit, axis=1)
     
-    return fit_new, beh_new
+    return fit, beh
