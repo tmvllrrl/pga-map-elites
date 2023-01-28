@@ -52,7 +52,8 @@ def plot_cvt_map(
         fit, beh = load_ryan_data(archive_file, plot_species) # fit = fit if plot_species False, species if True
         if plot_species:
             # colormap = mpl.colors.ListedColormap(["red", "green", "orange", "yellow", "violet", "deeppink", "sienna", "black"])
-            colormap = mpl.cm.Pastel1
+            # print(plt.colormaps())
+            colormap = mpl.cm.Set1
     else:
         fit, beh, _ = load_data(archive_file, centroids.shape[1], verbose=verbose)
 
@@ -131,7 +132,7 @@ def plot_cvt_map(
     else:
         custom_lines = []
         for i in range(max_fit[0]+1):
-            custom_lines.append(Line2D([0], [0], color='w', marker='s', markersize=15, markerfacecolor=colormap(norm(i/1.))))
+            custom_lines.append(Line2D([0], [0], color='w', marker='s', markersize=18, markerfacecolor=colormap(norm(i/1.))))
 
         labels = []
         for i in range(max_fit[0]+1):
