@@ -77,6 +77,8 @@ def plot_archive(
         for idx, archive_file in enumerate(archive_data_files):
             print(f"IDX: {idx}\t ARCHIVE FILE: {archive_file}")
             archive_plot_filename = f"archive_ryan_{env_name}_beh_{idx}"
+            archive_file = os.path.join(exp_path, archive_file)
+            print(f"ARCHIVE FILE: {archive_file}")
 
             plotable = plot_cvt_map(
                     archive_file,

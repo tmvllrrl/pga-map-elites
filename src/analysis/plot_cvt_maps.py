@@ -49,7 +49,7 @@ def plot_cvt_map(
     verbose and print("\nArchive filename : ", archive_file)
     
     if ryan:
-        fit, beh = load_ryan_data(archive_file, plot_species) # fit = fit if plot_species False, species if True
+        fit, beh = load_ryan_data(archive_file, plot_species) # fit = fit if plot_species False, species id if True
         if plot_species:
             # colormap = mpl.colors.ListedColormap(["red", "green", "orange", "yellow", "violet", "deeppink", "sienna", "black"])
             # print(plt.colormaps())
@@ -121,7 +121,7 @@ def plot_cvt_map(
     ax.set_xlabel(bd_axis[0])
     ax.set_ylabel(bd_axis[1])
     
-
+    # Defining either a color bar if not plotting species, or a legend if plotting species
     if not plot_species:
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="5%", pad=0.05)
@@ -298,24 +298,23 @@ import json
 
 def load_ryan_data(archive_file, plot_species=False):
     archive = {}
-    results_file = f'./results_Ryan/{archive_file}'
 
-    with open(results_file) as f:
+    with open(archive_file) as f:
         archive_dict = json.load(f)
 
-    if not plot_species:
+    if not plot_species: # Plotting the fit value
         for item in archive_dict["items"]:
             archive[tuple(item[0])] = item[1]
 
         beh = np.asarray(list(archive.keys())) 
         fit = np.asarray(list(archive.values()))
         fit = np.expand_dims(fit, axis=1)
-    else:
+    else: # Plotting the species id
         for item in archive_dict["species_ids"]:
             archive[tuple(item[0])] = item[1]
         
         beh = np.asarray(list(archive.keys())) 
-        fit = np.asarray(list(archive.values()))
+        fit = np.asarray(list(archive.values())) # Actually species id, not fit
         fit = np.expand_dims(fit, axis=1)
     
     return fit, beh
